@@ -46,5 +46,5 @@ setup(
     entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
-    """,
+    """
 )
