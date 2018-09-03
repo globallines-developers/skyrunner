@@ -10,6 +10,7 @@ Skyrunner scrapes with json definition
 Installation
 --------------
 .. code-block:: sh
+
    $ pip install skyrunner
 
 
@@ -21,9 +22,10 @@ How to use
 3) You create class for share on scraping tasks and define `self.attributes = dict()` at constructor.
 
 .. code-block:: python
-  class TaskSharedData:
-      def __init__(self):
-          self.attributes = dict()
+
+   class TaskSharedData:
+       def __init__(self):
+           self.attributes = dict()
 
 4) You call `skyrunner.setup_task_manager('scraping_steps_defined.json', TaskSharedData())` at your program.
 
@@ -31,13 +33,14 @@ How to use
 sample of Scraping task definition json
 ------------------------------------------
 .. code-block:: json
-    {
+
+   {
       "description": "tasks description",
       "driver": {
         "name": "webdriver",
         "browser": "firefox"
       },
-      "tasks": [        // task steps
+      "tasks": [
         {
           "description": "access to google",
           "action": "link",
@@ -71,6 +74,7 @@ other support actions
 - click
 
 .. code-block:: json
+
     {
       "description": "click task",
       "action": "click",
@@ -83,7 +87,8 @@ other support actions
 - custom
 
 .. code-block:: json
-    {
+
+   {
       "description": "custom task for complex process, update the shared data etc..",
       "action": "custom",
       "params": {
@@ -96,6 +101,7 @@ other support actions
 - shared_input
 
 .. code-block:: json
+
     {
       "description": "shared input task",
       "action": "shared_input",
