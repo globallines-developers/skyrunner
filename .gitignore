@@ -1,4 +1,5 @@
 .idea/
 venv/
 skyrunner.egg-info/
+skyrunner/__pycache__/
 

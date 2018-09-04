@@ -183,5 +183,5 @@ class CustomTask(Task):
         if self.type == "python":
             datam = imm.SourceFileLoader(self.class_name, self.script_file).load_module()
             cls = getattr(datam, self.class_name)
-            custom = cls(self.shared_data)
+            custom = cls(self.driver, self.shared_data)
             custom.run()
