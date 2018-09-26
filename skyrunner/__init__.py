@@ -23,7 +23,7 @@ class TaskManager:
         self.tasks = list()
 
     def __config_file_parse(self, config_file_path):
-        with open(config_file_path, 'r') as file:
+        with open(config_file_path, 'r', encoding='utf-8_sig') as file:
             return json.load(file)
 
     def setup(self):
@@ -79,6 +79,8 @@ class Task:
         self.action = task["action"]
         self.before_sleep = int(task["before_sleep"]) if "before_sleep" in task else 1
         self.after_sleep = int(task["after_sleep"]) if "after_sleep" in task else 1
+        self.before_implicitly_wait = int(task["before_implicitly_wait"]) if "before_implicitly_wait" in task else 0
+        self.after_implicitly_wait = int(task["after_implicitly_wait"]) if "after_implicitly_wait" in task else 0
 
     def execute(self):
         self.before_execute()
@@ -88,6 +90,7 @@ class Task:
     def before_execute(self):
         logging.info("[>>>> Start task] {}".format(self.description))
         sleep(self.before_sleep)
+        self.driver.implicitly_wait(self.before_implicitly_wait)
 
     def run(self):
         pass
@@ -95,6 +98,7 @@ class Task:
     def after_execute(self):
         logging.info("[<<<< End task] {}".format(self.description))
         sleep(self.after_sleep)
+        self.driver.implicitly_wait(self.after_implicitly_wait)
 
     def set_shared_data(self, key, value):
         self.shared_data.attributes[key] = value
@@ -162,6 +166,7 @@ class ClickTask(Task):
         super().__init__(task, driver, shared_data)
         self.selector_type = task["params"]["type"]
         self.path = task["params"]["path"]
+
 
     @abstractmethod
     def run(self):
