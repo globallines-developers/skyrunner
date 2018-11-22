@@ -4,16 +4,16 @@ import importlib.machinery as imm
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from abc import ABCMeta, abstractmethod
 
 logging.basicConfig(level=logging.INFO)
 
 
-def setup_task_manager(config_file_path, task_shared_data):
+def execute(config_file_path, task_shared_data):
     manager = TaskManager(config_file_path, task_shared_data)
     manager.setup()
     manager.execute_tasks()
-
 
 class TaskManager:
     def __init__(self, config_file_path, task_shared_data):
@@ -22,13 +22,13 @@ class TaskManager:
         self.driver = None
         self.tasks = list()
 
-    def __config_file_parse(self, config_file_path):
-        with open(config_file_path, 'r', encoding='utf-8_sig') as file:
-            return json.load(file)
-
     def setup(self):
         self.driver = self.__setup_driver()
         self.tasks = self.__setup_tasks()
+
+    def __config_file_parse(self, config_file_path):
+        with open(config_file_path, 'r', encoding='utf-8_sig') as file:
+            return json.load(file)
 
     def __setup_driver(self):
         driver = Driver(self.config["driver"])
@@ -53,22 +53,40 @@ class TaskManager:
         return tasks
 
     def execute_tasks(self):
-        for task in self.tasks:
-            task.execute()
-
+        try:
+            for task in self.tasks:
+                task.execute()
+        except Exception as e:
+            logging.fatal("[FATAL] Exception", e.args)
+        finally:
+            self.driver.close()
 
 class Driver:
     def __init__(self, driver):
         self.driver = driver
 
     def setup(self):
-        if self.driver["name"] == 'webdriver':
+        if self.driver["remote"]:
             if self.driver["browser"] == 'firefox':
-                return webdriver.Firefox()
+                return webdriver.Remote(
+                    command_executor=self.driver["command_executor"],
+                    desired_capabilities=DesiredCapabilities.FIREFOX
+                )
             elif self.driver["browser"] == 'chrome':
-                return webdriver.Chrome()
+                return webdriver.Remote(
+                    command_executor=self.driver["command_executor"],
+                    desired_capabilities=DesiredCapabilities.CHROME
+                )
+            else:
+                raise ValueError("Unsupported driver {0}".format(self.driver))
         else:
-            raise ValueError("Unsupported driver {0}".format(self.driver))
+            if self.driver["name"] == 'webdriver':
+                if self.driver["browser"] == 'firefox':
+                    return webdriver.Firefox()
+                elif self.driver["browser"] == 'chrome':
+                    return webdriver.Chrome()
+            else:
+                raise ValueError("Unsupported driver {0}".format(self.driver))
 
 
 class Task:
