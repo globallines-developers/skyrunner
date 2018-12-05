@@ -2,4 +2,5 @@
 venv/
 skyrunner.egg-info/
 skyrunner/__pycache__/
+skyrunner/**/__pycache__/
 
