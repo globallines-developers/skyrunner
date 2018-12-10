@@ -22,7 +22,7 @@ version = next((line.split('=')[1].strip().replace("'", '')
                                               'skyrunner',
                                               '__init__.py.py'))
                 if line.startswith('__version__ = ')),
-               '0.0.3')
+               '0.0.4')
 
 setup(
     name="skyrunner",
